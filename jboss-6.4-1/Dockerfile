@@ -1,18 +1,29 @@
-### Set the base image from Fedora
+### Use latest jboss/base-jdk:8 image as the base
 FROM jboss/base-jdk:7
 
 ### File Author / Maintainer
 MAINTAINER "Babatunde Adeyemi" "me@tundeadeyemi.com"
 
-### Install EAP 6.4
-ADD installs/jboss-eap-6.4.zip /tmp/jboss-eap-6.4.zip
-RUN unzip /tmp/jboss-eap-6.4.zip
-
-### Set environment
+### Set environment variables
 ENV JBOSS_HOME /opt/jboss/jboss-eap-6.4
 
+### Add the JBoss distribution to /opt/jboss/, and make jboss it the owner of the
+### extracted tar content
+
+### Install EAP 6.4
+ADD installs/jboss-eap-6.4.zip /tmp/jboss-eap-6.4.zip
+
+RUN cp /tmp/jboss-eap-6.4.zip $HOME
+
+RUN cd $HOME \ 
+	&& unzip jboss-eap-6.4.zip \ 
+	&& rm $HOME/jboss-eap-6.4.zip
+
+### Ensure signals are forwarded to the JVM process correctly for graceful shutdown
+ENV LAUNCH_JBOSS_IN_BACKGROUND true
+
 ### Create EAP user
-RUN $JBOSS_HOME/bin/add_user.sh admin admin123! --silent
+RUN $JBOSS_HOME/bin/add-user.sh admin admin123! --silent
 
 ### Configure EAP
 RUN echo "JAVA_OPTS=\"\$JAVA_OPTS -Djboss.bind.address=0.0.0.0 -Djboss.bind.address.management=0.0.0.0\"" >> $JBOSS_HOME/bin/standalone.conf
