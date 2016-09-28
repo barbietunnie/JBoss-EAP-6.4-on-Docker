@@ -7,6 +7,9 @@ MAINTAINER "Babatunde Adeyemi" "me@tundeadeyemi.com"
 ### Set environment variables
 ENV JBOSS_HOME /opt/jboss/jboss-eap-6.4
 
+### Set deployment directory
+ENV DEPLOYMENT_DIR $JBOSS_HOME/standalone/deployments/
+
 ### Add the JBoss distribution to /opt/jboss/, and make jboss it the owner of the
 ### extracted tar content
 
